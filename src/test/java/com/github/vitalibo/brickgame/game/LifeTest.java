@@ -19,7 +19,7 @@ public class LifeTest {
 
     @BeforeMethod
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         life = Life.of(mockCanvas);
     }
 

@@ -39,7 +39,7 @@ public class ControllerTest {
 
     @BeforeMethod
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         Mockito.when(mockFrame.getPause()).thenReturn(mockPause);
         Mockito.when(mockFrame.getSound()).thenReturn(mockSound);
         Mockito.when(mockFrame.getBoard()).thenReturn(mockBoard);
@@ -124,7 +124,7 @@ public class ControllerTest {
 
         public EmbeddedGame(Context context) {
             super(context);
-            MockitoAnnotations.initMocks(this);
+            MockitoAnnotations.openMocks(this);
         }
 
     }
