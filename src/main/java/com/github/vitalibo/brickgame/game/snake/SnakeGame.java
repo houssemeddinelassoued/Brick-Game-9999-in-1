@@ -71,6 +71,8 @@ public class SnakeGame extends Game {
             case UP:
                 UP.doStep();
                 break;
+            default:
+                break;
         }
     }
 
