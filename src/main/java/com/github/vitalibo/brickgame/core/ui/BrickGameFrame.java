@@ -6,6 +6,8 @@ import lombok.Getter;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class BrickGameFrame extends JFrame {
 
@@ -40,6 +42,10 @@ public class BrickGameFrame extends JFrame {
         this.init();
     }
 
+    /** Base dimensions — used to compute the aspect ratio. */
+    private static final int BASE_WIDTH  = 190;
+    private static final int BASE_HEIGHT = 260;
+
     private void init() {
         this.setBackground(new Color(0x6D785C));
         this.setContentPane(root());
@@ -52,10 +58,28 @@ public class BrickGameFrame extends JFrame {
         }
 
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setSize(new Dimension(190, 260));
-        this.setResizable(false);
+        this.setSize(new Dimension(BASE_WIDTH, BASE_HEIGHT));
+        this.setMinimumSize(new Dimension(BASE_WIDTH, BASE_HEIGHT));
+        this.setResizable(true);
+
+        // Enforce aspect ratio on every resize
+        this.addComponentListener(new ComponentAdapter() {
+            private boolean adjusting = false;
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+                if (adjusting) return;
+                adjusting = true;
+                int w = getWidth();
+                int h = (int) Math.round(w * (double) BASE_HEIGHT / BASE_WIDTH);
+                setSize(w, h);
+                adjusting = false;
+            }
+        });
+
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setLocation((int) ((dimension.getWidth() - this.getWidth()) / 2),
+        this.setLocation(
+            (int) ((dimension.getWidth()  - this.getWidth())  / 2),
             (int) ((dimension.getHeight() - this.getHeight()) / 2));
         this.setVisible(true);
     }

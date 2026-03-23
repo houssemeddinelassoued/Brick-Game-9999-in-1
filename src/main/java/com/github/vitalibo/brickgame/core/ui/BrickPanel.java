@@ -7,6 +7,7 @@ import com.github.vitalibo.brickgame.util.Builder;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.RenderingHints;
 import java.util.stream.IntStream;
 
 public class BrickPanel extends JPanel implements Canvas {
@@ -77,11 +78,18 @@ public class BrickPanel extends JPanel implements Canvas {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
+            int w = getWidth();
+            int h = getHeight();
+            int size = Math.min(w, h);
+            int ox = (w - size) / 2;
+            int oy = (h - size) / 2;
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             Color color = state ? ON : OFF;
-            g.setColor(color);
-            g.drawRect(0, 0, 9, 9);
-            g.setColor(color);
-            g.fillRect(3, 3, 4, 4);
+            g2.setColor(color);
+            g2.drawRect(ox, oy, size - 1, size - 1);
+            int pad = Math.max(1, size / 3);
+            g2.fillRect(ox + pad, oy + pad, size - 2 * pad, size - 2 * pad);
         }
 
     }
