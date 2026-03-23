@@ -26,6 +26,8 @@ public class BrickGameFrame extends JFrame {
     @Getter
     private final IconPanel pause;
 
+    private JPanel sidebarPanel;
+
     public BrickGameFrame() {
         super("Brick Game");
         this.board = new BrickPanel(10, 20);
@@ -62,7 +64,7 @@ public class BrickGameFrame extends JFrame {
         this.setMinimumSize(new Dimension(BASE_WIDTH, BASE_HEIGHT));
         this.setResizable(true);
 
-        // Enforce aspect ratio on every resize
+        // Enforce aspect ratio on every resize and scale sidebar width proportionally
         this.addComponentListener(new ComponentAdapter() {
             private boolean adjusting = false;
 
@@ -73,6 +75,14 @@ public class BrickGameFrame extends JFrame {
                 int w = getWidth();
                 int h = (int) Math.round(w * (double) BASE_HEIGHT / BASE_WIDTH);
                 setSize(w, h);
+                if (sidebarPanel != null) {
+                    int sidebarW = (int) Math.round(w * 60.0 / BASE_WIDTH);
+                    sidebarPanel.setPreferredSize(new Dimension(sidebarW, h));
+                }
+                SwingUtilities.invokeLater(() -> {
+                    getContentPane().revalidate();
+                    getContentPane().repaint();
+                });
                 adjusting = false;
             }
         });
@@ -85,33 +95,37 @@ public class BrickGameFrame extends JFrame {
     }
 
     private JPanel root() {
-        return Builder.of(new JPanel())
-            .with(root -> root.setOpaque(false))
-            .with(root -> Builder.of(board)
-                .with(frame -> frame.setBorder(new LineBorder(new Color(0x0), 1)))
-                .with(root::add))
-            .with(root -> panel(new GridLayout(0, 1))
-                .with(panel -> panel(new GridLayout(0, 1))
-                    .with(o -> o.add(label("Score", JLabel.RIGHT)))
-                    .with(o -> o.add(score))
-                    .with(panel::add))
-                .with(panel -> panel(new FlowLayout(FlowLayout.CENTER, 0, 0))
-                    .with(o -> o.add(preview))
-                    .with(panel::add))
-                .with(panel -> panel(new GridLayout(0, 1))
-                    .with(o -> o.add(label("Speed", JLabel.CENTER)))
-                    .with(o -> o.add(speed))
-                    .with(panel::add))
-                .with(panel -> panel(new GridLayout(0, 1))
-                    .with(o -> o.add(level))
-                    .with(o -> o.add(label("Level", JLabel.CENTER)))
-                    .with(panel::add))
-                .with(panel -> panel(new GridLayout(0, 1))
-                    .with(o -> o.add(sound))
-                    .with(o -> o.add(pause))
-                    .with(panel::add))
-                .with(root::add))
+        JPanel root = new JPanel(new BorderLayout(0, 0));
+        root.setOpaque(false);
+
+        board.setBorder(new LineBorder(new Color(0x0), 1));
+        root.add(board, BorderLayout.CENTER);
+
+        sidebarPanel = panel(new GridLayout(0, 1))
+            .with(sidebar -> panel(new GridLayout(0, 1))
+                .with(o -> o.add(label("Score", JLabel.RIGHT)))
+                .with(o -> o.add(score))
+                .with(sidebar::add))
+            .with(sidebar -> Builder.of(new JPanel(new BorderLayout(0, 0)))
+                .with(p -> p.setOpaque(false))
+                .with(p -> p.add(preview, BorderLayout.CENTER))
+                .with(sidebar::add))
+            .with(sidebar -> panel(new GridLayout(0, 1))
+                .with(o -> o.add(label("Speed", JLabel.CENTER)))
+                .with(o -> o.add(speed))
+                .with(sidebar::add))
+            .with(sidebar -> panel(new GridLayout(0, 1))
+                .with(o -> o.add(level))
+                .with(o -> o.add(label("Level", JLabel.CENTER)))
+                .with(sidebar::add))
+            .with(sidebar -> panel(new GridLayout(0, 1))
+                .with(o -> o.add(sound))
+                .with(o -> o.add(pause))
+                .with(sidebar::add))
             .get();
+
+        root.add(sidebarPanel, BorderLayout.EAST);
+        return root;
     }
 
     private static JLabel label(String text, int alignment) {

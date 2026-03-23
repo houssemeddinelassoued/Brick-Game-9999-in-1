@@ -18,7 +18,7 @@ public class IconPanel extends JPanel implements State {
 
     IconPanel(String on, String off, boolean state) {
         this.state = state;
-        this.setLayout(new FlowLayout(FlowLayout.CENTER, 1, 1));
+        this.setLayout(new BorderLayout(0, 0));
         this.setOpaque(false);
         this.add(new Canvas(IconPanel.resourceAsImage(on), IconPanel.resourceAsImage(off)));
     }
@@ -62,7 +62,7 @@ public class IconPanel extends JPanel implements State {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            g.drawImage(state ? ON : OFF, 0, 0, null);
+            g.drawImage(state ? ON : OFF, 0, 0, getWidth(), getHeight(), null);
         }
 
     }

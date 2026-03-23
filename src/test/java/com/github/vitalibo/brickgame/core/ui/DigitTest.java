@@ -57,7 +57,8 @@ public class DigitTest {
         spyDigit.paintComponent(mockGraphics);
 
         Mockito.verify(mockGraphics).drawImage(
-            Mockito.notNull(), Mockito.eq(0), Mockito.eq(0), Mockito.eq(null));
+            Mockito.notNull(), Mockito.eq(0), Mockito.eq(0),
+            Mockito.anyInt(), Mockito.anyInt(), Mockito.eq(null));
     }
 
     @DataProvider

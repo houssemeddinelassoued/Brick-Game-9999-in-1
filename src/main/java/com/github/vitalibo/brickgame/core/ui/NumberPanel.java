@@ -74,6 +74,23 @@ public class NumberPanel extends JPanel implements Number {
             this.setPreferredSize(new Dimension(8, 13));
         }
 
+        @Override
+        public Dimension getPreferredSize() {
+            Container parent = getParent();
+            if (parent != null && parent.getWidth() > 8) {
+                int n = Math.max(1, parent.getComponentCount());
+                // 1px gap between digits + 2px FlowLayout hgap on each side
+                int gaps = (n - 1) + 4;
+                int digitW = Math.max(8, (parent.getWidth() - gaps) / n);
+                int availH = parent.getHeight() > 13 ? parent.getHeight() - 2 : Integer.MAX_VALUE;
+                int digitH = Math.min(availH, Math.max(13, digitW * 13 / 8));
+                // If height was clamped, also constrain width to preserve aspect ratio
+                digitW = Math.min(digitW, digitH * 8 / 13);
+                return new Dimension(digitW, digitH);
+            }
+            return new Dimension(8, 13);
+        }
+
         public int get() {
             return value;
         }
@@ -94,7 +111,7 @@ public class NumberPanel extends JPanel implements Number {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            g.drawImage(NUMERICAL_DIGIT[value], 0, 0, null);
+            g.drawImage(NUMERICAL_DIGIT[value], 0, 0, getWidth(), getHeight(), null);
         }
 
     }
