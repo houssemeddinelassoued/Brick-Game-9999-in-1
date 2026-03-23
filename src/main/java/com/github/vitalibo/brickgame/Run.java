@@ -4,6 +4,7 @@ package com.github.vitalibo.brickgame;
 import com.github.vitalibo.brickgame.core.Controller;
 import com.github.vitalibo.brickgame.core.Kernel;
 import com.github.vitalibo.brickgame.core.ui.BrickGameFrame;
+import com.github.vitalibo.brickgame.game.AboutGame;
 import com.github.vitalibo.brickgame.game.Game;
 import com.github.vitalibo.brickgame.game.Menu;
 import com.github.vitalibo.brickgame.game.race.RaceGame;
@@ -21,7 +22,8 @@ public class Run {
             RaceGame.class,
             TetrisGame.class,
             ShootGame.class,
-            TanksGame.class
+            TanksGame.class,
+            AboutGame.class
         };
         Menu.setGames(GAMES);
     }

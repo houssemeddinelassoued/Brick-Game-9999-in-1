@@ -1,6 +1,7 @@
 package com.github.vitalibo.brickgame.core;
 
 import com.github.vitalibo.brickgame.core.ui.BrickGameFrame;
+import com.github.vitalibo.brickgame.game.AboutGame;
 import com.github.vitalibo.brickgame.game.Game;
 import com.github.vitalibo.brickgame.game.Life;
 import com.github.vitalibo.brickgame.game.Menu;
@@ -74,6 +75,12 @@ public class Controller extends KeyAdapter implements Controllable {
                 // TODO: clean up
                 init(Menu.class);
                 context.getLife().set(0);
+                this.unlock();
+                break;
+            case KeyEvent.VK_A:
+                context.getKernel().values()
+                    .forEach(Kernel.Job::kill);
+                init(AboutGame.class);
                 this.unlock();
                 break;
         }
