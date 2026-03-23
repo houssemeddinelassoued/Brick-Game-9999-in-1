@@ -32,7 +32,7 @@ public class CountdownJobTest {
 
     @SneakyThrows
     private static void sleep() {
-        Thread.sleep(100);
+        Thread.sleep(500);
     }
 
 }
