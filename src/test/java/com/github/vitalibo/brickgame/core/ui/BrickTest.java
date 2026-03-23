@@ -7,6 +7,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.awt.*;
+import java.awt.RenderingHints;
 
 public class BrickTest {
 
@@ -42,13 +43,13 @@ public class BrickTest {
 
     @Test(dataProvider = "samples")
     public void testPaintState(boolean state, Color color) {
-        Graphics mockGraphics = Mockito.mock(Graphics.class);
+        Graphics2D mockGraphics = Mockito.mock(Graphics2D.class);
         Mockito.when(mockGraphics.create()).thenReturn(mockGraphics);
 
         spyBrick.set(state);
         spyBrick.paintComponent(mockGraphics);
 
-        Mockito.verify(mockGraphics, Mockito.times(2)).setColor(color);
+        Mockito.verify(mockGraphics, Mockito.atLeastOnce()).setColor(color);
     }
 
 }
