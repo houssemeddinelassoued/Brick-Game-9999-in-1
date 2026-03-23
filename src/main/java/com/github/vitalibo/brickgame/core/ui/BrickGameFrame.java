@@ -6,8 +6,6 @@ import lombok.Getter;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 
 public class BrickGameFrame extends JFrame {
 
@@ -64,34 +62,34 @@ public class BrickGameFrame extends JFrame {
         this.setMinimumSize(new Dimension(BASE_WIDTH, BASE_HEIGHT));
         this.setResizable(true);
 
-        // Enforce aspect ratio on every resize and scale sidebar width proportionally
-        this.addComponentListener(new ComponentAdapter() {
-            private boolean adjusting = false;
-
-            @Override
-            public void componentResized(ComponentEvent e) {
-                if (adjusting) return;
-                adjusting = true;
-                int w = getWidth();
-                int h = (int) Math.round(w * (double) BASE_HEIGHT / BASE_WIDTH);
-                setSize(w, h);
-                if (sidebarPanel != null) {
-                    int sidebarW = (int) Math.round(w * 60.0 / BASE_WIDTH);
-                    sidebarPanel.setPreferredSize(new Dimension(sidebarW, h));
-                }
-                SwingUtilities.invokeLater(() -> {
-                    getContentPane().revalidate();
-                    getContentPane().repaint();
-                });
-                adjusting = false;
-            }
-        });
-
-        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(
-            (int) ((dimension.getWidth()  - this.getWidth())  / 2),
-            (int) ((dimension.getHeight() - this.getHeight()) / 2));
+            (int) ((screen.getWidth()  - BASE_WIDTH)  / 2),
+            (int) ((screen.getHeight() - BASE_HEIGHT) / 2));
         this.setVisible(true);
+    }
+
+    /**
+     * Intercept every resize at the lowest level (before the native peer commits it).
+     * Width is the leading axis; height is derived from it to maintain the aspect ratio.
+     * This eliminates the flicker and off-ratio frames that a post-hoc ComponentListener
+     * produces when the user drags any edge or corner.
+     */
+    @Override
+    public void setBounds(int x, int y, int w, int h) {
+        if (!isVisible()) {
+            // During construction (pack, setSize before setVisible) – apply as-is.
+            super.setBounds(x, y, w, h);
+            return;
+        }
+        int cw = Math.max(w, BASE_WIDTH);
+        int ch = (int) Math.round(cw * (double) BASE_HEIGHT / BASE_WIDTH);
+        // Update sidebar preferred width only when frame width actually changes.
+        if (sidebarPanel != null && cw != getWidth()) {
+            int sidebarW = (int) Math.round(cw * 60.0 / BASE_WIDTH);
+            sidebarPanel.setPreferredSize(new Dimension(sidebarW, 1));
+        }
+        super.setBounds(x, y, cw, ch);
     }
 
     private JPanel root() {
