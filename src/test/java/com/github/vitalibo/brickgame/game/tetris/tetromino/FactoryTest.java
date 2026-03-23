@@ -5,7 +5,9 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -58,6 +60,30 @@ public class FactoryTest {
 
     private static Function<Integer, Tetromino> function(Function<Integer, Tetromino> function) {
         return function;
+    }
+
+    // ── Factory.generate() ─────────────────────────────────────────────────
+
+    @Test
+    public void testGenerateReturnsNonNull() {
+        Assert.assertNotNull(Factory.generate());
+    }
+
+    @Test
+    public void testGenerateReturnsValidState() {
+        Tetromino tetromino = Factory.generate();
+        Assert.assertTrue(tetromino.getState() < 4);
+    }
+
+    @Test
+    public void testGenerateProducesMultipleTypes() {
+        // Run enough times to cover all 7 switch branches probabilistically
+        Set<Class<?>> seen = new HashSet<>();
+        for (int i = 0; i < 200; i++) {
+            seen.add(Factory.generate().getClass());
+        }
+        Assert.assertTrue(seen.size() > 1,
+            "Expected multiple Tetromino types but saw only: " + seen);
     }
 
 }
