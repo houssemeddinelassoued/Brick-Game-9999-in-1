@@ -31,6 +31,7 @@ public class Controller extends KeyAdapter implements Controllable {
             Life.of(frame.getPreview()),
             frame.getSound(), frame.getPause(),
             kernel, this);
+        SoundManager.startMusic();
     }
 
     @Synchronized
@@ -61,8 +62,9 @@ public class Controller extends KeyAdapter implements Controllable {
     public void keyPressed(KeyEvent event) {
         switch (event.getKeyCode()) {
             case KeyEvent.VK_S:
-                context.getSound().change();
-                // TODO: on/off sound
+                boolean soundOn = context.getSound().change();
+                SoundManager.setEnabled(soundOn);
+                if (soundOn) SoundManager.play(SoundManager.Sound.TOGGLE);
                 break;
             case KeyEvent.VK_P:
                 boolean isPause = context.getPause().change();
@@ -92,18 +94,23 @@ public class Controller extends KeyAdapter implements Controllable {
         switch (event.getKeyCode()) {
             case KeyEvent.VK_UP:
                 this.doUp();
+                SoundManager.play(SoundManager.Sound.MOVE);
                 break;
             case KeyEvent.VK_DOWN:
                 this.doDown();
+                SoundManager.play(SoundManager.Sound.DROP);
                 break;
             case KeyEvent.VK_LEFT:
                 this.doLeft();
+                SoundManager.play(SoundManager.Sound.MOVE);
                 break;
             case KeyEvent.VK_RIGHT:
                 this.doRight();
+                SoundManager.play(SoundManager.Sound.MOVE);
                 break;
             case KeyEvent.VK_SPACE:
                 this.doRotate();
+                SoundManager.play(SoundManager.Sound.ROTATE);
                 break;
         }
     }
